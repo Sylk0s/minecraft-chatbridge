@@ -2,31 +2,39 @@ import redis
 from subprocess import Popen, PIPE
 from threading import Thread
 import json
-
-#asyncio coroutine
-#pipe file mkfifo
+from queue import Queue, Empty
+import asyncio
 
 configs = json.load(open("publisher/configs.json"))
 
 r = redis.Redis(host=configs['host'], port=configs['port'], password=configs['pass'])
 
-server = Popen(["java","-jar",configs['path'], "--nogui"], stdout=PIPE,stdin=PIPE, universal_newlines=True)
+server = Popen(["java","-jar",configs['path'], "--nogui"], stdout=PIPE,  stdin=PIPE, universal_newlines=True)
 
-def readOutput(serverOutput):
-   for line in iter(serverOutput.readline, b''):
-       print(line)
+def getOut(out, queue):
+    for line in iter(out.readline, b''):
+        queue.put(line)
+    out.close()
 
-def provideInput(serverInput):
+def getIn(queue):
     while True:
         inp = input()
-        serverInput.write(inp)
-        serverInput.flush()
+        queue.put(inp)
+        
+qOut = Queue()
+tOut = Thread(target=getOut, args=(server.stdout, qOut))
+tOut.daemon = True
+tOut.start()
+qIn = Queue()
+tIn = Thread(target=getIn, args=(qIn,))
+tIn.daemon = True
+tIn.start()
 
-inputHandler = Thread(target=provideInput,args=server.stdin)
-outputHandler = Thread(target=readOutput, args=server.stdout)
-inputHandler.daemon = True
-outputHandler.daemon = True
-inputHandler.start()
-outputHandler.start()
-
-print("upsi")
+while True:
+    try: print(qOut.get_nowait())
+    except: pass
+    try: 
+        prgmInput = qIn.get_nowait()
+        server.stdin.write(prgmInput)
+        print(f"Inputed: {prgmInput}")
+    except: pass
