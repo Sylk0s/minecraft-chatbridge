@@ -3,12 +3,12 @@ from subprocess import Popen, PIPE
 from threading import Thread
 import json
 from queue import Queue, Empty
-import asyncio
+import os
 
 def main():
-    configs = json.load(open("publisher/configs.json"))
-    r = redis.Redis(host=configs['host'], port=configs['port'], password=configs['pass'])
-    server = Popen(["java","-jar",configs['path'], "--nogui"], stdout=PIPE,  stdin=PIPE, universal_newlines=True)
+    configs = json.load(open("configs.json"))
+    #r = redis.Redis(host=configs['host'], port=configs['port'], password=configs['pass'])
+    server = Popen(["java","-jar",configs['path']], shell=False,stdout=PIPE,  stdin=PIPE, universal_newlines=True,bufsize=0)
 
     # queue for program output
     qOut = Queue()
@@ -23,14 +23,14 @@ def main():
     tIn.start()
 
     # queue for discord input
-    qExt = Queue()
-    tExt = Thread(target=getExt, args=())
-    tExt.daemon = True
-    tExt.start()
+    #qExt = Queue()
+    #tExt = Thread(target=getExt, args=())
+    #tExt.daemon = True
+    #tExt.start()
 
     while True:
         try: 
-            prgmOutput = parseB(qOut.get_nowait())
+            prgmOutput = qOut.get_nowait()
             print(prgmOutput)
             # parse output
             # handle any client cmd output
@@ -38,12 +38,16 @@ def main():
         except: pass
         try:
             prgmInput = qIn.get_nowait()
-            server.stdin.write(parseTellraw(prgmInput))
+            if prgmInput == ";exit":
+                # include server killer
+                return
+                
+            server.stdin.write(prgmInput + "\n")
         except: pass
-        try:
-            extInput = qExt.get_nowait()
-            server.stdin.write(parseTellraw(extInput))
-        except: pass
+        #try:
+        #    extInput = qExt.get_nowait()
+        #    server.stdin.write(parseTellraw(extInput))
+        #except: pass
 
 # Output:
 # in form b'message'
