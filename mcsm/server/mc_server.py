@@ -23,9 +23,12 @@ class Server:
         tOut.daemon = True
         tOut.start()
 
+        print("Server Runnning...")
+
     def getOutput(self, out_pipe, queue):
         for line in iter(out_pipe.readline, b''):
             queue.put(line)
+            print(line)
         out_pipe.close()
 
     def sendInput(self, in_pipe, queue):
@@ -33,6 +36,7 @@ class Server:
             try:
                 cli_input = queue.get_nowait()
                 in_pipe.write(cli_input)
+                in_pipe.flush()
             except:
                 pass
 
