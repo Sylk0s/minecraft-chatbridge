@@ -10,7 +10,7 @@ class Server:
         self.configs = Configs(name, app.getServerConfigFile())
 
     def run(self):
-        self.instance = Popen(["java","-jar",self.configs.getJarPath(),"--nogui"], cwd = self.configs.path, stdin = PIPE, stdout = PIPE, universal_newlines = True)
+        self.instance = Popen(["java","-jar",self.configs.getJarPath(),"--nogui"], cwd = self.configs.path, stdin = PIPE, stdout = PIPE, universal_newlines=True)
 
         self.in_queue = Queue()
         self.out_queue = Queue()
@@ -28,15 +28,14 @@ class Server:
     def getOutput(self, out_pipe, queue):
         for line in iter(out_pipe.readline, b''):
             queue.put(line)
-            print(line)
         out_pipe.close()
 
     def sendInput(self, in_pipe, queue):
         while True:
             try:
                 cli_input = queue.get_nowait()
+                # this write isnt working...................
                 in_pipe.write(cli_input)
-                in_pipe.flush()
             except:
                 pass
 

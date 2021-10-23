@@ -1,4 +1,5 @@
 from mcsm.server.mc_server import Server
+from queue import Queue
 
 class SimpleCLI:
     def setServer(self, server):
@@ -15,7 +16,8 @@ class SimpleCLI:
     def getServerOutput(self):
         while True:
             try:
-                self.server.out_queue.get_nowait()
+                # isn't getting here
+                out = self.server.out_queue.get_nowait()
                 print(out)
             except:
                 pass
