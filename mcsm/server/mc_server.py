@@ -2,6 +2,7 @@ import json
 from subprocess import Popen, PIPE
 from queue import Queue
 from threading import Thread
+# import pexpect
 
 # import server_manager.server.io.reader
 
@@ -10,7 +11,7 @@ class Server:
         self.configs = Configs(name, app.getServerConfigFile())
 
     def run(self):
-        self.instance = Popen(["java","-jar",self.configs.getJarPath(),"--nogui"], cwd = self.configs.path, stdin = PIPE, stdout = PIPE, universal_newlines=True)
+        self.instance = Popen(["java","-jar",self.configs.getJarPath(),"--nogui"], cwd=self.configs.path, stdin=PIPE, stdout=PIPE, universal_newlines=True, shell=False, bufsize=0)
 
         self.in_queue = Queue()
         self.out_queue = Queue()
@@ -28,6 +29,13 @@ class Server:
     def getOutput(self, out_pipe, queue):
         for line in iter(out_pipe.readline, b''):
             queue.put(line)
+
+            if "Done" in line:
+                print("found the thing")
+                self.in_queue.put("say queue")
+                self.instance.stdin.write("say raw")
+
+
         out_pipe.close()
 
     def sendInput(self, in_pipe, queue):
@@ -35,7 +43,9 @@ class Server:
             try:
                 cli_input = queue.get_nowait()
                 # this write isnt working...................
+                print("input was",cli_input)
                 in_pipe.write(cli_input)
+                in_pipe.flush()
             except:
                 pass
 

@@ -1,6 +1,14 @@
 from mcsm.server.mc_server import Server
 from mcsm.cli.cli_manager import Manager
 import time
+import argparse
+
+#parser = argparse.ArgumentParser(description='Server managing cli utility', prog='mcsm')
+#parser.add_argument('-s','--start', help='Starts the designated server')
+
+#args = parser.parse_args()
+
+
 
 class Controller:
     def runServer(self):
