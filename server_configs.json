@@ -2,5 +2,9 @@
     "server": {
         "path":"/home/sylkos/server/",
         "runnable":"server.jar"
+    },
+    "server2": {
+        "path":"/home/sylkos/server2",
+        "runnable":"server.jar"
     }
 }
