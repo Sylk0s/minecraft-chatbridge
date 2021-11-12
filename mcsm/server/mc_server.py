@@ -2,9 +2,6 @@ import json
 from subprocess import Popen, PIPE
 from queue import Queue
 from threading import Thread
-# import pexpect
-
-# import server_manager.server.io.reader
 
 class Server:
     def __init__(self, name, app):
@@ -36,9 +33,7 @@ class Server:
         while True:
             try:
                 cli_input = queue.get_nowait()
-                # this write isnt working...................
-                # print("input was",cli_input)
-                in_pipe.write(cli_input+ '\n')
+                in_pipe.write(cli_input+ '\n') # im an idiot :\
                 in_pipe.flush()
             except:
                 pass
