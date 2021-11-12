@@ -1,21 +1,17 @@
 # minecraft-chatbridge
-
-A chatbridge for minecraft written in Python.
+MCSM: MineCraft Server Manager 
+A server manager written in python to manage various type of dedicated servers, but originally written with MC servers in mind
   
    Goals:
   
    -work regardless of os
+   
+   -eventually package for pip and AUR
   
-   -be able to run with any type of mc server (vanilla, modded, paper, etc)
+   -be able to run any executable server file
   
-   -link to discord
+   -support plugins to implement a modular backup system, chatbridge, in game commands, and more...
  
-  -remote commands
- 
-  -very configurable
- 
-  Features to add/future plans:
- 
-  -Port for remote acces to headless factorio servers
- 
-  -Use in game "commands" similar to how ProtoTech does scoreboards
+   -very configurable and modular
+   
+   -somewhat lightweight core
