@@ -1,6 +1,6 @@
 {
     "server": {
         "path":"/home/sylkos/server/",
-        "jar":"server.jar"
+        "runnable":"server.jar"
     }
 }

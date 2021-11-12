@@ -1,4 +1,4 @@
-from mcsm.server.mc_server import Server
+from mcsm.server.server import Server
 from queue import Queue
 
 class SimpleCLI:
@@ -9,9 +9,11 @@ class SimpleCLI:
         while True:
             user_in = input()
 
+            # handles all 
             if self.checkMCSM(user_in):
                 pass
-            self.server.in_queue.put(user_in)
+            else:
+                self.server.in_queue.put(user_in)
 
     def getServerOutput(self):
         while True:
@@ -22,4 +24,4 @@ class SimpleCLI:
                 pass
 
     def checkMCSM(self, msg):
-        return False
+        return msg.split()[0] == 'mcsm'

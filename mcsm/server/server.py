@@ -4,11 +4,13 @@ from queue import Queue
 from threading import Thread
 
 class Server:
-    def __init__(self, name, app):
-        self.configs = Configs(name, app.getServerConfigFile())
+
+    def __init__(self, name, app, configs, args):
+        self.args = args
+        self.configs = configs
 
     def run(self):
-        self.instance = Popen(["java","-jar",self.configs.getJarPath()], cwd=self.configs.path, stdin=PIPE, stdout=PIPE, universal_newlines=True, shell=False)
+        self.instance = Popen(self.args, cwd=self.configs.path, stdin=PIPE, stdout=PIPE, universal_newlines=True, shell=False)
 
         self.in_queue = Queue()
         self.out_queue = Queue()
@@ -21,14 +23,15 @@ class Server:
         tOut.daemon = True
         tOut.start()
 
-        print("Server Runnning...")
+        print(name,'is running')
 
+    # Reads the server's output and puts it into the output queue for the server
     def getOutput(self, out_pipe, queue):
         for line in iter(out_pipe.readline, b''):
             queue.put(line)
-
         out_pipe.close()
 
+    # Reads the server's input queue and writes it to the input pipe for the server
     def sendInput(self, in_pipe, queue):
         while True:
             try:
@@ -38,12 +41,17 @@ class Server:
             except:
                 pass
 
+class MCServer(Server):
+    def __init__(self, name, app):
+        self.configs = Configs(name, app.getServerConfigFile())
+        super(self, name, app, configs, ["java",self.configs.getServerPath(), ""])
+        
 class Configs:
     def __init__(self, name, config_file):
         all_configs = json.load(open(config_file))
         configs = all_configs[name]
         self.path = configs['path']
-        self.jar = configs['jar']
+        self.runnable = configs['runnable']
     
-    def getJarPath(self):
-        return self.path + self.jar
+    def getServerPath(self):
+        return self.path + self.runnable
