@@ -16,7 +16,6 @@ class SimpleCLI:
     def getServerOutput(self):
         while True:
             try:
-                # isn't getting here
                 out = self.server.out_queue.get_nowait()
                 print(out)
             except:

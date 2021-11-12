@@ -26,3 +26,5 @@ class Controller:
 
 ctl = Controller()
 ctl.runServer()
+
+time.sleep(20)

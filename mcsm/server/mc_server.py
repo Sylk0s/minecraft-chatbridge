@@ -11,7 +11,7 @@ class Server:
         self.configs = Configs(name, app.getServerConfigFile())
 
     def run(self):
-        self.instance = Popen(["java","-jar",self.configs.getJarPath(),"--nogui"], cwd=self.configs.path, stdin=PIPE, stdout=PIPE, universal_newlines=True, shell=False, bufsize=0)
+        self.instance = Popen(["java","-jar",self.configs.getJarPath()], cwd=self.configs.path, stdin=PIPE, stdout=PIPE, universal_newlines=True, shell=False)
 
         self.in_queue = Queue()
         self.out_queue = Queue()
@@ -30,12 +30,6 @@ class Server:
         for line in iter(out_pipe.readline, b''):
             queue.put(line)
 
-            if "Done" in line:
-                print("found the thing")
-                self.in_queue.put("say queue")
-                self.instance.stdin.write("say raw")
-
-
         out_pipe.close()
 
     def sendInput(self, in_pipe, queue):
@@ -43,8 +37,8 @@ class Server:
             try:
                 cli_input = queue.get_nowait()
                 # this write isnt working...................
-                print("input was",cli_input)
-                in_pipe.write(cli_input)
+                # print("input was",cli_input)
+                in_pipe.write(cli_input+ '\n')
                 in_pipe.flush()
             except:
                 pass
