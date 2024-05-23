@@ -16,12 +16,10 @@ class Server:
         self.in_queue = Queue()
         self.out_queue = Queue()
 
-        tIn = Thread(target=self.sendInput, args=(self.instance.stdin, self.in_queue))
-        tIn.daemon = True
+        tIn = Thread(target=self.sendInput, args=(self.instance.stdin, self.in_queue), daemon = True)
         tIn.start()
         
-        tOut = Thread(target=self.getOutput, args=(self.instance.stdout, self.out_queue))
-        tOut.daemon = True
+        tOut = Thread(target=self.getOutput, args=(self.instance.stdout, self.out_queue), daemon = True)
         tOut.start()
 
         print(self.name,'is running')
