@@ -1,4 +1,6 @@
 # minecraft-chatbridge
+> ⚠️⚠️⚠️ This project has been rewritten in [sylk0s/mctl](https://github.com/sylk0s/mctl). This is an earlier iteration, so should not be used. It's also probably broken.
+
 MCSM: MineCraft Server Manager 
 A server manager written in python to manage various type of dedicated servers, but originally written with MC servers in mind
   
